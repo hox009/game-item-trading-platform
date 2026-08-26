@@ -1,6 +1,4 @@
-// Jenkins declarative pipeline for the Game Item Trading Platform.
-// Mirrors the resume claim: containerized services on AWS ECS with Docker and
-// Jenkins CI/CD, cutting release cycles from 30 minutes to under 5 minutes.
+// Jenkins declarative pipeline for building, testing, and publishing the platform.
 
 pipeline {
     agent any

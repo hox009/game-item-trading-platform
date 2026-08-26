@@ -2,10 +2,9 @@
 
 A distributed marketplace for trading game virtual items (skins, accounts, top-up
 cards) built as **Spring Cloud microservices**, with an **AI trading assistant**
-(LangChain + RAG + function calling) as an independent Python service.
-
-> One line: *"An idle-marketplace for game items + an AI assistant that can look up
-> prices, give pricing advice, and place orders for you."*
+(LangChain + RAG + function calling) as an independent Python service. The platform
+supports catalog search, seller listings, inventory control, wallet payments,
+order processing, notifications, and AI-assisted pricing and ordering.
 
 ## Architecture
 
@@ -45,17 +44,6 @@ cards) built as **Spring Cloud microservices**, with an **AI trading assistant**
 | `notification-service` | 8086 | Station inbox | RabbitMQ |
 | `ai-assistant-service` | 8087 | AI trading assistant | Python, LangChain, RAG |
 | `frontend` | 3001 | Web UI (catalog, orders, AI chat) | React, Vite, Tailwind |
-
-## How the resume bullets map to code
-
-1. **100K+ SKU distributed platform (Spring Cloud, Kafka, Redis)** → 8 microservices,
-   Kafka order event stream (`order.paid` / `order.cancelled`), Redis `@Cacheable` catalog.
-2. **LLM trading assistant (LangChain, RAG, function calling), 70%+ autonomous** →
-   `ai-assistant-service`: tools call business APIs; RAG over `data/knowledge.md`.
-3. **500 QPS / 99.9% availability** → gateway Redis rate limiting, K8s multi-replica
-   deployments, Kafka event-driven order processing; load test in `scripts/loadtest`.
-4. **AWS ECS + Docker + Jenkins CI/CD, 30min→<5min** → per-service Dockerfiles,
-   `docker-compose.yml`, `k8s/` manifests, `Jenkinsfile`, GitHub Actions.
 
 ## Prerequisites
 - **Docker only** to run the whole stack (each service builds inside its container).
@@ -136,5 +124,3 @@ curl -X POST localhost:8080/api/users/login    -H "Content-Type: application/jso
 # ask the assistant (offline fallback works without an OpenAI key)
 curl -X POST localhost:8087/api/assistant/chat -H "Content-Type: application/json" -d "{\"message\":\"What is a fair price for a CS2 knife skin?\"}"
 ```
-
-See [docs/01-产品开发计划.md](docs/01-产品开发计划.md) for the full product plan.

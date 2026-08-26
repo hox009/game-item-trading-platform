@@ -1,9 +1,9 @@
 // k6 load test for the Game Item Trading Platform.
-// Simulates the core trading path through the gateway to validate the
-// 500 QPS / 99.9% availability targets (resume bullet #3).
+// Simulates the core trading path through the gateway to measure throughput
+// and business error rates.
 //
 // Usage:
-//   1. Bring up the stack (see docker-compose in M5) and seed a user + items.
+//   1. Bring up the stack with Docker Compose and seed a user + items.
 //   2. Install k6: https://k6.io/docs/get-started/installation/
 //   3. Run:  k6 run scripts/loadtest/order-flow.js
 //
@@ -34,7 +34,7 @@ export const options = {
   },
   thresholds: {
     http_req_duration: ['p(99)<200'],   // P99 latency < 200ms
-    http_req_failed: ['rate<0.001'],    // < 0.1% failures => 99.9% availability
+    http_req_failed: ['rate<0.001'],    // Fewer than 0.1% failed requests
     business_errors: ['rate<0.01'],
   },
 };
