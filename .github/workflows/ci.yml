@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-java:
+    name: Build & test (Java)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build and test
+        run: ./mvnw -B verify
+
+      - name: Upload jars
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-jars
+          path: "*/target/*.jar"
+          if-no-files-found: ignore
+
+  test-python:
+    name: Test (Python AI assistant)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai-assistant-service
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install minimal deps and test (offline fallback)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pydantic pydantic-settings httpx pytest
+          pytest -q
+
+  docker-build:
+    name: Build container images
+    needs: [build-java, test-python]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build service images (self-contained multi-stage)
+        run: |
+          for svc in gateway user-service item-service inventory-service payment-service order-service notification-service; do
+            docker build -f $svc/Dockerfile -t gametrade/$svc:${{ github.sha }} .
+          done
+          docker build -t gametrade/ai-assistant-service:${{ github.sha }} ./ai-assistant-service
+          docker build -t gametrade/frontend:${{ github.sha }} ./frontend

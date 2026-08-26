@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+    gateway:
+      discovery:
+        locator:
+          enabled: true          # auto-route by service id: /service-id/**
+          lower-case-service-id: true
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: ${RATE_LIMIT_RPS:200}
+            redis-rate-limiter.burstCapacity: ${RATE_LIMIT_BURST:400}
+            key-resolver: "#{@userKeyResolver}"
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+        - id: item-service
+          uri: lb://item-service
+          predicates:
+            - Path=/api/items/**
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+        - id: ai-assistant-service
+          uri: lb://ai-assistant-service
+          predicates:
+            - Path=/api/assistant/**
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+
+# Shared JWT secret — MUST match user-service
+jwt:
+  secret: ${JWT_SECRET:change-me-please-use-a-32-byte-secret-key!!}
+  expiration-millis: 7200000
+
+security:
+  whitelist:
+    - /api/users/login
+    - /api/users/register
+    - /actuator/**
+    # Catalog browsing (GET /api/items and /api/items/{id}) is public via the
+    # method-aware rule in AuthGlobalFilter, so it is not listed here.
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,prometheus
+
+logging:
+  level:
+    com.gametrade: INFO
+    org.springframework.cloud.gateway: INFO

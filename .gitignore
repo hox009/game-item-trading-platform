@@ -1,0 +1,35 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+*.local
+
+# Generated seed data (reproducible via scripts/seed/generate_seed.py)
+scripts/db/seed-items.sql
+
+# Python (ai-assistant-service)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.chroma/

@@ -1,0 +1,227 @@
+# Backend microservices. Each is a Deployment (2 replicas for horizontal
+# scaling / K8s load balancing) plus an internal ClusterIP Service.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: user-service }
+  template:
+    metadata:
+      labels: { app: user-service }
+    spec:
+      containers:
+        - name: user-service
+          image: gametrade/user-service:latest
+          ports: [{ containerPort: 8081 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8081 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: gametrade
+spec:
+  selector: { app: user-service }
+  ports: [{ port: 8081, targetPort: 8081 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: item-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: item-service }
+  template:
+    metadata:
+      labels: { app: item-service }
+    spec:
+      containers:
+        - name: item-service
+          image: gametrade/item-service:latest
+          ports: [{ containerPort: 8082 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8082 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: item-service
+  namespace: gametrade
+spec:
+  selector: { app: item-service }
+  ports: [{ port: 8082, targetPort: 8082 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: inventory-service }
+  template:
+    metadata:
+      labels: { app: inventory-service }
+    spec:
+      containers:
+        - name: inventory-service
+          image: gametrade/inventory-service:latest
+          ports: [{ containerPort: 8083 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8083 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-service
+  namespace: gametrade
+spec:
+  selector: { app: inventory-service }
+  ports: [{ port: 8083, targetPort: 8083 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: payment-service }
+  template:
+    metadata:
+      labels: { app: payment-service }
+    spec:
+      containers:
+        - name: payment-service
+          image: gametrade/payment-service:latest
+          ports: [{ containerPort: 8084 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8084 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: gametrade
+spec:
+  selector: { app: payment-service }
+  ports: [{ port: 8084, targetPort: 8084 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: gametrade
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: order-service }
+  template:
+    metadata:
+      labels: { app: order-service }
+    spec:
+      containers:
+        - name: order-service
+          image: gametrade/order-service:latest
+          ports: [{ containerPort: 8085 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8085 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: gametrade
+spec:
+  selector: { app: order-service }
+  ports: [{ port: 8085, targetPort: 8085 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: notification-service }
+  template:
+    metadata:
+      labels: { app: notification-service }
+    spec:
+      containers:
+        - name: notification-service
+          image: gametrade/notification-service:latest
+          ports: [{ containerPort: 8086 }]
+          envFrom: [{ configMapRef: { name: platform-config } }]
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8086 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: gametrade
+spec:
+  selector: { app: notification-service }
+  ports: [{ port: 8086, targetPort: 8086 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-assistant-service
+  namespace: gametrade
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: ai-assistant-service }
+  template:
+    metadata:
+      labels: { app: ai-assistant-service }
+    spec:
+      containers:
+        - name: ai-assistant-service
+          image: gametrade/ai-assistant-service:latest
+          ports: [{ containerPort: 8087 }]
+          env:
+            - name: GATEWAY_URL
+              value: "http://gateway:80"
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8087 }
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-assistant-service
+  namespace: gametrade
+spec:
+  selector: { app: ai-assistant-service }
+  ports: [{ port: 8087, targetPort: 8087 }]

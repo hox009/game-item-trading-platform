@@ -1,0 +1,18 @@
+# Keep the Docker build context small and reproducible.
+**/target
+**/node_modules
+**/dist
+**/.venv
+**/__pycache__
+**/*.pyc
+.git
+.github
+.idea
+.vscode
+.localtools
+*.log
+docs
+k8s
+scripts/db/seed-items.sql
+frontend
+mock-server

@@ -1,0 +1,7 @@
+-- Creates one database per microservice (Database per Service pattern).
+CREATE DATABASE IF NOT EXISTS game_user CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS game_item CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS game_inventory CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS game_order CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS game_payment CHARACTER SET utf8mb4;
+CREATE DATABASE IF NOT EXISTS game_notification CHARACTER SET utf8mb4;

@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: gametrade-services
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - gateway:8080
+          - user-service:8081
+          - item-service:8082
+          - inventory-service:8083
+          - payment-service:8084
+          - order-service:8085
+          - notification-service:8086
+        labels:
+          platform: game-item-trading
