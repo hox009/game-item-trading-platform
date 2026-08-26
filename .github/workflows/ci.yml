@@ -47,7 +47,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pydantic pydantic-settings httpx pytest
-          pytest -q
+          python -m pytest -q
 
   docker-build:
     name: Build container images
