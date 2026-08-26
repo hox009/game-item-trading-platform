@@ -2,9 +2,7 @@
 # Build context is the repo root (see docker-compose.yml).
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
-COPY pom.xml ./
-COPY common ./common
-COPY gateway ./gateway
+COPY . .
 RUN mvn -B -pl gateway -am -DskipTests package
 
 FROM eclipse-temurin:17-jre

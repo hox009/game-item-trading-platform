@@ -2,10 +2,7 @@
 # Build context is the repo root (see docker-compose.yml).
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
-COPY pom.xml ./
-COPY common ./common
-COPY common-web ./common-web
-COPY user-service ./user-service
+COPY . .
 RUN mvn -B -pl user-service -am -DskipTests package
 
 FROM eclipse-temurin:17-jre
